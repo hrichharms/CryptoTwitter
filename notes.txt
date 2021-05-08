@@ -8,3 +8,7 @@ cryptocurrency api
 npl
     - does it mention a cryptocurrency/which cryptocurrency
     - is the tweet positive?
+
+frontend framework
+    - set cryptocurrency/amount
+    - set accounts to follow
