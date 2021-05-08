@@ -1,0 +1,10 @@
+twitter api
+    - get tweets from a user
+    - get content of a tweets
+
+cryptocurrency api
+    - buy a given amount of a given cryptocurrency
+
+npl
+    - does it mention a cryptocurrency/which cryptocurrency
+    - is the tweet positive?
