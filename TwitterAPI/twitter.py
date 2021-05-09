@@ -71,7 +71,7 @@ def generate_languages(headers, language_api_url, documents):
 
 #combines returned values and returns general tweet data
 def combine_lang_data(documents, with_languages):
-    langs = pd.DataFrame(with_languages["documents"])
+    langs = pd.DataFrame(with_languages["documents"]) ##encountering an error here "Access denied due to invalid subscription key"
     lang_iso = [x.get("iso6391Name")
                 for d in langs.detectedLanguages if d for x in d]
     data_only = documents["documents"]
@@ -89,7 +89,7 @@ def add_document_format(json_lines):
     jl_align = json.loads(jd_align)
     return ast.literal_eval(jl_align)
 
-#Calls sentiment endpoiny
+#Calls sentiment endpoint
 def sentiment_scores(headers, sentiment_url, document_format):
     response = requests.post(
         sentiment_url, headers=headers, json=document_format)
@@ -103,6 +103,9 @@ def score_logic(score):
         print("Neutral")
     else:
         print("Negative")
+
+def azure_header(subscription_key):
+    return {"Ocp-Apim-Subscription-Key": subscription_key}###fixes headers problem i think?
 
 
 if __name__ == "__main__":
