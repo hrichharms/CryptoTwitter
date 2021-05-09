@@ -19,5 +19,14 @@ Today's world is one that moves at a breakneck speed--nowhere is this more clear
 stocks soar and fall capriciously, and often it becomes a struggle to keep one's head above the evermoving financial current. But it doesn't have 
 to be this way. 
 
-Enter CryptoTweet. With just some simple inputs, CryptoTweet keeps a vigilant eye and keeps you head and shoulders ahead of the competition 
-in the world of cryptocurrency. 
+Enter CryptoTweet. With just some simple inputs, CryptoTweet keeps a vigilant eye on the twitters of cyptocurrency industry leaders 
+and keeps you head and shoulders ahead of the competition in the world of cryptocurrency. 
+
+But how does it work? 
+
+Essentially, by inputting such things as (???, the name of the influencer, the amount of money you want to invest, etc...), CryptoTweet immediately 
+invests in a specifc cryptocurrency that is mentioned positively by the influencer.
+
+We do this with a combination of Microsoft Azure technology and Twitter's native API. By detecting these "triggering tweets", where cryptocurrency
+is mentioned with an average postive sentiment score greater than or equal to the user's discretion, CryptoTweet invests your money in the cryptocurrency
+instantaneously, providing the end user with profit when the value of the investment increases.
