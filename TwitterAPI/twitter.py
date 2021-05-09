@@ -4,10 +4,11 @@ import json
 import ast
 import yaml
 
-#determines which twitter account will be analyzed for specifc sentiments
+
+# determines which twitter account will be analyzed for specifc sentiments
 def create_twitter_url():  # adjust query to skip retweets/media if needed, add fields/expansions
     handle = "elonmusk"
-    max_results = 100
+    max_results = 10
     mrf = "max_results={}".format(max_results)
     q = "query=from:{}".format(handle)
     url = "https://api.twitter.com/2/tweets/search/recent?{}&{}".format(
@@ -29,25 +30,31 @@ def main():
     document_format = add_document_format(json_lines)
     sentiments = sentiment_scores(headers, sentiment_url, document_format)
     score = sentiments["documents"][0]["score"]
+    #print(type(sentiments["documents"][0]["score"]))
     print(score)
     score_logic(score)
+    #print(type(sentiments))
 
-#reads the YAML file, saves contents
+
+# reads the YAML file, saves contents
 def process_yaml():
     with open("config.yaml") as file:
         return yaml.safe_load(file)
 
-#accesses bearer token from YAML
+
+# accesses bearer token from YAML
 def create_bearer_token(data):
     return data["search_tweets_api"]["bearer_token"]
 
-#passes the bearer token and url to connect to twitter API 
+
+# passes the bearer token and url to connect to twitter API
 def twitter_auth_and_connect(bearer_token, url):
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
     response = requests.request("GET", url, headers=headers)
     return response.json()
 
-#changes shape of data to match Azure format
+
+# changes shape of data to match Azure format
 def lang_data_shape(res_json):
     data_only = res_json["data"]
     doc_start = '"documents": {}'.format(data_only)
@@ -56,7 +63,8 @@ def lang_data_shape(res_json):
     doc = json.loads(dump_doc)
     return ast.literal_eval(doc)
 
-#connects to azure
+
+# connects to azure
 def connect_to_azure(data):
     azure_url = "https://cryptotwitter.cognitiveservices.azure.com/"
     language_api_url = "{}text/analytics/v2.1/languages".format(azure_url)
@@ -64,14 +72,16 @@ def connect_to_azure(data):
     subscription_key = data["azure"]["subscription_key"]
     return language_api_url, sentiment_url, subscription_key
 
-#also connects to Azure by passing subscription key
+
+# also connects to Azure by passing subscription key
 def generate_languages(headers, language_api_url, documents):
     response = requests.post(language_api_url, headers=headers, json=documents)
     return response.json()
 
-#combines returned values and returns general tweet data
+
+# combines returned values and returns general tweet data
 def combine_lang_data(documents, with_languages):
-    langs = pd.DataFrame(with_languages["documents"]) ##encountering an error here "Access denied due to invalid subscription key"
+    langs = pd.DataFrame(with_languages["documents"]) 
     lang_iso = [x.get("iso6391Name")
                 for d in langs.detectedLanguages if d for x in d]
     data_only = documents["documents"]
@@ -80,7 +90,8 @@ def combine_lang_data(documents, with_languages):
     json_lines = tweet_data.to_json(orient="records")
     return json_lines
 
-#formats data to prep for calling Azure's sentiment endpoint
+
+# formats data to prep for calling Azure's sentiment endpoint
 def add_document_format(json_lines):
     docu_format = '"' + "documents" + '"'
     json_docu_format = "{}:{}".format(docu_format, json_lines)
@@ -89,23 +100,26 @@ def add_document_format(json_lines):
     jl_align = json.loads(jd_align)
     return ast.literal_eval(jl_align)
 
-#Calls sentiment endpoint
+
+# Calls sentiment endpoint
 def sentiment_scores(headers, sentiment_url, document_format):
     response = requests.post(
         sentiment_url, headers=headers, json=document_format)
     return response.json()
 
-#coonverts avg score to words
+
+# coonverts avg score to words
 def score_logic(score):
-    if score >= 0.75:  #Change these values?
-        print("Positive") 
+    if score >= 0.75:  # Change these values?
+        print("Positive")
     elif score >= 0.45:
         print("Neutral")
     else:
         print("Negative")
 
+
 def azure_header(subscription_key):
-    return {"Ocp-Apim-Subscription-Key": subscription_key}###fixes headers problem i think?
+    return {"Ocp-Apim-Subscription-Key": subscription_key}  ###fixes headers problem i think?
 
 
 if __name__ == "__main__":
